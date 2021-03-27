@@ -1,0 +1,220 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Lachaise Assignment
+% LaTeX Template
+% Version 1.0 (26/6/2018)
+%
+% This template originates from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Marion Lachaise & François Févotte
+% Vel (vel@LaTeXTemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage{dirtree}
+
+\usepackage{hyperref}
+
+\usepackage{listings}
+
+\input{structure.tex} % Include the file specifying the document structure and custom commands
+
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{MapReduce on the Rutgers Hadoop Cluster} % Title of the assignment
+
+%\author{David Domingo\\ \texttt{djd240@cs.rutgers.edu}} % Author name and email address
+
+%\date{Last Updated: \today} % University, school and/or department name(s) and a date
+\date{\vspace{-7ex}}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title
+
+
+\begin{figure}[h!]
+ \centering
+ \includegraphics[width=55mm]{images/Rutgers}\hspace{15mm}
+ \includegraphics[width=50mm]{images/hadoop}
+\end{figure} 
+
+%----------------------------------------------------------------------------------------
+%	INTRODUCTION
+%----------------------------------------------------------------------------------------
+
+\section*{Introduction} % Unnumbered section
+
+At Rutgers, we have a Hadoop cluster that students can use to run Spark and MapReduce programs. In this guide, we'll be going over how to use Rutgers' Hadoop Cluster to run MapReduce Programs. In order to run MapReduce you will have do three things: 1.) Place your runnable jar and input files onto the cluster, 2.) Move your input files into HDFS, and 3.) Invoke MapReduce. 
+
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%----------------------------------------------------------------------------------------
+
+\hypersetup{hidelinks}
+\tableofcontents
+
+
+%----------------------------------------------------------------------------------------
+%	Connecting to the Cluster
+%----------------------------------------------------------------------------------------
+
+\section{Connecting to the Cluster}
+There are three nodes at which we can connect to the Rutgers Hadoop Cluster: \textit{data1.cs.rutgers.edu}, \textit{data2.cs.rutgers.edu}, and \textit{data3.cs.rutgers.edu}. You can connect to them via Secure Shell (SSH)
+\begin{lstlisting}[language=bash]
+  $ ssh <netid>@<remote>
+\end{lstlisting}
+example:
+\begin{lstlisting}[language=bash]
+  $ ssh abc123@data1.cs.rutgers.edu
+\end{lstlisting}
+
+\begin{info}[You need to know linux commands:]
+To interact with the cluster you will have to familiarize yourself with linux commands and network protocols such as ssh and scp If you are unfamiliar with typical linux, check out https://www.cs.rutgers.edu/resources/beginners-info and look at the resources under the "Introduction to CS Resources" and "Intro to Linux" sections to read up on how to interact with the linux iLab machines.
+\end{info}
+
+
+%----------------------------------------------------------------------------------------
+%	Transferring Files to the Cluster
+%----------------------------------------------------------------------------------------
+
+\section{Moving Files to the Cluster}
+In order to run MapReduce on the cluster, we need to have our runnable jars and input files on the iLab machines. You can transfer data to the iLab machines using the Secure Copy Protocol. 
+Typical scp command usage is as follows:
+\begin{lstlisting}[language=bash]
+  $ scp <source> <destination>
+\end{lstlisting}
+Example:
+\begin{lstlisting}[language=bash]
+  $ scp file.txt abc123@data1.cs.rutgers.edu:~
+\end{lstlisting}
+\textbf{Note:} Notice the usage of the colon within the destination. The path after the colon specifies the file path the file should be placed on the destination system. In our example we simply used the tilde character, $\sim$, which represents the home directory.
+
+\-\ \\We can also transfer files from the iLab machines back to our local computer, switching the source and destination like such,
+\begin{lstlisting}[language=bash]
+  $ scp abc123@data1.cs.rutgers.edu:~/file.txt file.txt
+\end{lstlisting}
+
+%----------------------------------------------------------------------------------------
+%	Preparing Input
+%----------------------------------------------------------------------------------------
+
+\section{HDFS and Preparing Input}
+
+Now for Hadoop to use your input, the input files must be on HDFS. By using scp you were able to get your files onto the machine, but not onto HDFS. Now you need to get it from the machine to HDFS. To get files on HDFS, use HDFS commands to move files to and from HDFS while SSH'd in the cluster.
+
+\-\ \\You can move a file to hdfs by using the -put command:
+\begin{lstlisting}[language=bash]
+  $ hdfs dfs -put <source> <dest>
+\end{lstlisting}    
+\-\ \\You can list your files on hdfs by using the -ls command:
+\begin{lstlisting}[language=bash]
+  $ hdfs dfs -ls 
+\end{lstlisting} 
+\-\ \\Example placing a file "input.txt" onto HDFS:
+\begin{lstlisting}[language=bash]
+  $ ls
+  input.txt
+  $ hdfs dfs -put input.txt 
+  $ hdfs dfs -ls 
+  Found 1 item 
+  -rw-r--r--   1 hadoop hadoop          0 2018-11-20 00:17 input.txt
+\end{lstlisting} 
+
+\-\ \\ You can read more on HDFS commands here:\\ https://hadoop.apache.org/docs/r2.4.1/hadoop-project-dist/hadoop-common/FileSystemShell.html
+ 
+
+
+%----------------------------------------------------------------------------------------
+%	Executing the Job
+%----------------------------------------------------------------------------------------
+\section{Executing MapReduce}
+When we want to interact with Hadoop, we run Hadoop commands. To run the MapReduce program, while SSH'd into the cluster, invoke Hadoop to run MapReduce by using the Hadoop jar command:
+\begin{lstlisting}[language=bash]
+  $ hadoop jar <jar location> <Main Class> <input> <output>
+\end{lstlisting}
+\-\ \\Example with the runnable jar on the cluster, the input data named input.txt in HDFS, and specifying Hadoop to create a folder named "output" to put the output files in:
+\begin{lstlisting}[language=bash]
+  $ hadoop jar WordCount-0.0.1-SNAPSHOT.jar WordCount input.txt output
+\end{lstlisting}
+
+\begin{info}[output folder must be unique:]
+When specifying the output folder, make the output folder should be unique. If a folder with the same name that already exists, the program will terminate and throw an error. 
+\end{info}
+
+
+
+\section{Examining MapReduce Output}
+After the MapReduce job executes, Hadoop should have created a folder on HDFS with name you specified when executing. \\
+
+\noindent You can checkout the output by using the hdfs ls and cat commands.
+For example if you specified Hadoop to store the results in a folder called "output" on HDFS, you can list the files within the output folder using the ls command
+\begin{lstlisting}[language=bash]
+  $ hdfs dfs -ls output
+  -rw-r--r--   1 hadoop hadoop          0 2018-11-20 00:06 output4/_SUCCESS
+  -rw-r--r--   1 hadoop hadoop      49831 2018-11-20 00:06 output/part-r-00000
+  -rw-r--r--   1 hadoop hadoop      49924 2018-11-20 00:06 output/part-r-00001
+\end{lstlisting}
+\-\ \\You can then print out the contents of one of the result files by using the cat command
+\begin{lstlisting}[language=bash]
+  $ hdfs dfs -cat output/part-r-00000
+\end{lstlisting}
+\-\ \\If you want to copy the results from HDFS back to your main directory within the cluster, you can use the hdfs get command:
+ \begin{lstlisting}[language=bash]
+  $ hdfs dfs -get output/part-r-00000
+\end{lstlisting} 
+\-\ \\If you want to transfer the results back to your local computer (not the cluster machine), you can use the scp command as described in section 2. 
+
+
+%----------------------------------------------------------------------------------------
+%	USEFUL LINKS AND RESOURCES
+%----------------------------------------------------------------------------------------
+\section*{Useful links and Resources}
+\textbf{Rutgers Hadoop Cluster}
+\begin{itemize}
+    \item \textit{Hadoop Cluster Information}\\ https://services.cs.rutgers.edu/hadoop.html
+\end{itemize}
+\textbf{Hadoop Cluster Interaction}
+\begin{itemize}
+    \item \textit{HDFS Overview and Commands}\\ https://hadoop.apache.org/docs/r2.4.1/hadoop-project-dist/hadoop-common/FileSystemShell.html
+\end{itemize}
+\textbf{MapReduce Guides}
+\begin{itemize}
+    \item \textit{Apache MapReduce Tutorial}\\ https://hadoop.apache.org/docs/stable/hadoop-mapreduce-client/hadoop-mapreduce-client-core/\\MapReduceTutorial.html
+\end{itemize} 
+
+\-\\\\\\\\\\\\\noindent \date{Last Updated: \today}
+
+%\begin{info}[Testing your web service:]
+%There are multiple tools you can use to make HTTP requests. Use these tools to test your web service
+%\end{info}
+
+%% File contents
+%\begin{file}[hello.py]
+%\begin{lstlisting}[language=Python]
+%#! /usr/bin/python
+%
+%import sys
+%sys.stdout.write("Hello World!\n")
+%\end{lstlisting}
+%\end{file}
+
+\end{document}
