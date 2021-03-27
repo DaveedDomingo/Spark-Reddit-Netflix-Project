@@ -27,7 +27,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{fancyvrb}
-\usepackage{enumitem}
+%\usepackage{enumitem}
 %\usepackage{upquote,textcomp} % needed to fix single quotes in verbatium mode
 
 \input{structure.tex} % Include the file specifying the document structure and custom commands
@@ -104,13 +104,13 @@ Apache Spark architecture is centered around the resilient distributed dataset (
 
 
 \-\ \\ \noindent \textbf{Helpful References:}
-\begin{itemize}[noitemsep]
-    \item \textbf{Apache Spark -}  \href{https://en.wikipedia.org/wiki/Apache_Spark}{\color{blue}{https://en.wikipedia.org/wiki/Apache\_Spark}}
-    \item \textbf{RDDs} - \href{https://www.tutorialspoint.com/apache_spark/apache_spark_rdd.htm}{\color{blue}{https://www.tutorialspoint.com/apache\_spark/apache\_spark\_rdd.htm}}
-    \item \textbf{Spark Architecture -} \href{https://www.edureka.co/blog/spark-architecture/}{\color{blue}{https://www.edureka.co/blog/spark-architecture/}} 
+\begin{itemize}
+    \item \textbf{Apache Spark -}  \href{https://en.wikipedia.org/wiki/Apache_Spark}{\color{blue}{https://en.wikipedia.org/wiki/Apache\_Spark}} \vspace{-0.1cm}
+    \item \textbf{RDDs} - \href{https://www.tutorialspoint.com/apache_spark/apache_spark_rdd.htm}{\color{blue}{https://www.tutorialspoint.com/apache\_spark/apache\_spark\_rdd.htm}}\vspace{-0.1cm}
+    \item \textbf{Spark Architecture -} \href{https://www.edureka.co/blog/spark-architecture/}{\color{blue}{https://www.edureka.co/blog/spark-architecture/}} \vspace{-0.1cm}
     \item \textbf{Spark Parallel Processing -}
-    \href{https://www.simplilearn.com/spark-parallel-processing-tutorial}{\color{blue}{https://www.simplilearn.com/spark-parallel-processing-tutorial}}
-    \item \textbf{Spark Examples -} \href{https://spark.apache.org/examples.html}{\color{blue}{https://spark.apache.org/examples.html}} (See Java Examples)
+    \href{https://www.simplilearn.com/spark-parallel-processing-tutorial}{\color{blue}{https://www.simplilearn.com/spark-parallel-processing-tutorial}}\vspace{-0.1cm}
+    \item \textbf{Spark Examples -} \href{https://spark.apache.org/examples.html}{\color{blue}{https://spark.apache.org/examples.html}} (See Java Examples)\vspace{-0.1cm}
     \item \textbf{Spark Java API -} \href{https://spark.apache.org/docs/latest/api/java/index.html}{\color{blue}{https://spark.apache.org/docs/latest/api/java/index.html}}
 \end{itemize}
 
@@ -539,6 +539,7 @@ The following is the bare structure of the project template: \\
 .4 java.
 .5 com.
 .6 RUSpark.
+.7 WordCount.java.
 .7 RedditPhotoImpact.java.
 .7 RedditHourImpact.java.
 .7 NetflixMovieAverage.java.
@@ -551,8 +552,9 @@ If you imported the project into Eclipse, additional folders may be present. Thi
 \end{info}
 
 \noindent \textbf{\underline{Main Implementation Files}} \vspace{0.2cm} \\
-\noindent Within the /src/main/java/com/RUSpark directory the four main Java files:
+\noindent Within the /src/main/java/com/RUSpark directory the five main Java files:
 \begin{itemize}
+   \item \textbf{\textit{WordCount.java}} - This is an example Spark program that counts the numbers of occurrences of each word in a text file.
     \item \textbf{\textit{RedditPhotoImpact.java}} - This is where you will implement the Spark program that calculates the impact of every photo within the Reddit data set
     \item \textbf{\textit{RedditHourImpact.java}} - This is where you will implement the Spark program that calculates the impact of all posts submitted within the same hour of the day
     \item \textbf{\textit{NetflixMovieAverage.java}} - This is where you will implement the Spark program that calculates the average rating of all movies within the Netflix data set 
@@ -747,15 +749,24 @@ To run a Spark program on a Spark cluster, you will have to use the \textit{spar
 You can run your project in two different places:
 \begin{enumerate}
     \item \textbf{The iLab Machines}\\ 
-    The iLab machines at Rutgers are equipped with Spark running in standalone mode. To learn to you project on the iLab machines by taking a look at following document
+    The iLab machines at Rutgers are equipped with Spark running in standalone mode. To run your program: (1) Ensure your compiled jar and data set are uploaded and present on the iLab machine then (2) invoke the spark-submit command like shown above. 
     \item \textbf{Amazon Web Services}\\
-    If you haven't already used AWS, this could be a great opportunity to understand how AWS works. 
-To learn how to run set up a Spark cluster on AWS and run your project take a look at the following guide
+    If you haven't already used AWS, this could be a great opportunity to understand how AWS works. To learn how to run set up a Spark cluster on AWS and run your project take a look at the following guide here: \href{https://github.com/DaveedDomingo/Spark-Reddit-Netflix-Project/blob/main/SparkOnAWS.pdf}{\color{blue}{https://github.com/DaveedDomingo/Spark-Reddit-Netflix-Project/blob/main/SparkOnAWS.pdf}}
 \end{enumerate}
+
 
 \begin{info}[Note on large data sets on iLab machines:]
 The data sets within this project are somewhat large. By default on the iLab machines, you have approximately $\sim$6GB of storage in your home directory (\texttt{/ilab/users/<your netid>}). However this may not be enough space. There is another filesystem where you have more space located at (\texttt{/common/users/<your netid>}). In this file system you have approximately $\sim$100GB of storage space available to you. This should be enough to store anything that won't fit in your home directory. \textbf{If using the iLab machines for this project, I recommend you download the data sets directly to your \texttt{/common/users/<your netid>} directory to ensure you don't take up space in your main home directory}. For more details on all the iLab storage options, see here: \href{https://resources.cs.rutgers.edu/docs/file-storage/storage-technology-options/}{\color{blue}{https://resources.cs.rutgers.edu/docs/file-storage/storage-technology-options/}}
 \end{info}
+
+\begin{info}[Saving Output to File:]
+So the results of your program should print out in STDOUT. However you'll notice when running your Spark program, you'll also see output given from spark. You can save and isolate your output by redirecting it to a file like:
+\begin{verbatim}               $ spark-submit myjar.jar inputdata.csv > out.txt
+\end{verbatim}
+
+
+\end{info}
+
 
 
 \section{Recommended Steps}
