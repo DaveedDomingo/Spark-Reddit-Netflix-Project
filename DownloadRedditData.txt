@@ -1,0 +1,12 @@
+Via Web Browser (URL):
+https://drive.google.com/uc?export=download&id=1zhtVn8-64QKpjl_y0uHWImooeSJkv7bc
+
+Via Terminal (WGET):
+wget -O RedditData.zip "https://docs.google.com/uc?export=download&id="1zhtVn8-64QKpjl_y0uHWImooeSJkv7bc
+
+Via Terminal (CURL):
+curl -L -o RedditData.zip "https://drive.google.com/uc?export=download&id="1zhtVn8-64QKpjl_y0uHWImooeSJkv7bc
+
+
+
+

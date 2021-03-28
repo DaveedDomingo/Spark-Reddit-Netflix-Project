@@ -1,0 +1,11 @@
+Via Web Browser (URL):
+https://drive.google.com/uc?export=download&id=1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp
+
+Via Terminal (WGET):
+wget --save-cookies cookies.txt "https://docs.google.com/uc?export=download&id="1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp -O- | sed -rn "s/.*confirm=([0-9A-Za-z_]+).*/\1/p" > confirm.txt; wget --load-cookies cookies.txt -O NetflixData.zip "https://docs.google.com/uc?export=download&id="1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp"&confirm="$(<confirm.txt); rm -f confirm.txt cookies.txt
+
+Via Terminal (CURL):
+curl -L -c cookies.txt "https://docs.google.com/uc?export=download&id="1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp | sed -rn "s/.*confirm=([0-9A-Za-z_]+).*/\1/p" > confirm.txt; curl -L -b cookies.txt -o NetflixData.zip "https://docs.google.com/uc?export=download&id="1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp"&confirm="$(<confirm.txt); rm -f confirm.txt cookies.txt
+
+
+
