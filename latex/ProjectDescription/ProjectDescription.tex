@@ -265,7 +265,7 @@ image_id, unixtime, title, subreddit, #_upvotes, #_downvotes, #_comments
 We can see the first and third entry are posts associated to an image with the id 123 and the second entry is a post associated with a image 152.
 
 
-\-\ \\In the end, the result of our program should look like such:
+\-\ \\In the end, the output of our program should look like such:
 %\begin{lstlisting}[language=bash]
 \begin{Verbatim}[frame=single]
 123 723
@@ -316,7 +316,7 @@ image_id, unixtime, title, subreddit, #_upvotes, #_downvotes, #_comments
 Here, when we convert the unix timestamps to EST, we see the first post was posted at 4:20PM EST on 3/25 and the second and third posts were posted at 1:20PM EST and 1:45PM EST respectively on 3/26.
 
 
-\-\ \\In the end, the result of our program should look like such:
+\-\ \\In the end, the output of our program should look like such:
 %\begin{lstlisting}[language=bash]
 \begin{Verbatim}[frame=single]
 0 0
@@ -380,12 +380,12 @@ Every row within the Netflix data set represents a movie review and the format o
 
 \noindent Provided are three different sized Reddit data files:
 \begin{itemize}
+    \item \textbf{NetflixData-ExtraSmall.csv} - reviews of 4 movies ($\sim$3k rows)($\sim$70KB in size)
     \item \textbf{NetflixData-Small.csv} - reviews of 10 movies ($\sim$20k rows)($\sim$450KB in size)
     \item \textbf{NetflixData-Medium.csv} - reviews of 1,000 movies ($\sim$5m rows)($\sim$120MB in size)
     \item \textbf{NetflixData-Large.csv} - reviews of 18k movies ($\sim$100m rows)($\sim$2.5GB in size)
 \end{itemize}
 
-\noindent \textbf{Note:} The small and medium data sets are simply subsets of the large data set. As you start to implement your spark programs, you should start off by running your programs on the smaller data sets then move up to the larger ones. 
 
 
 \subsection{Average Movie Rating (20 points)}
@@ -419,7 +419,7 @@ $$AvgRating_{id} = \frac{\sum Rating_i}{\#\ of\ ratings} \forall i \in R_{id}$$
 \noindent The average rating for a movie with id $id$ would be the summation of all ratings of each review $i$ in the set $R_{id}$ which is the set of all reviews for a movie with id $id$.
 
 \subsubsection*{Output and Analysis:}
-In the end, the result of our program should be the list of all movies and their average rating in the format:
+In the end, the output of our program should be the list of all movies and their average rating in the format:
 \begin{lstlisting}[language=bash]
                         <movie id> <average rating> 
 \end{lstlisting}
@@ -438,9 +438,9 @@ movie_id, customer_id, rating, date
 201, 2023, 3, 5-19-20
 \end{Verbatim}
 %\end{lstlisting}
-We can see that three of the reviews are for movie with id X and two of the the reviews are for the movie with id Y.
+We can see that three of the reviews are for movie with id 201 and two of the the reviews are for the movie with id 973.
 
-\-\ \\In the end, the result of our program should look like such:
+\-\ \\In the end, the output of our program should look like such:
 %\begin{lstlisting}[language=bash]
 \begin{Verbatim}[frame=single]
 201 3.33
@@ -494,21 +494,34 @@ where $M$ is the set of all movies.\\
 
 \noindent In the end, with this graph, if we find that a customer highly rated a particular movie/show, we can recommend it to their neighbors in the graph that have a high edge weight since that means they have similar tastes. 
 
-
+\begin{info}[Important: Only use the Extra Small Data Set.]
+Given the data explosion when counting edges between any two customers. You only need to make sure this works for the NetflixData-ExtraSmall.csv data set. 
+\end{info}
 
 \subsubsection*{Generating a Graph:}
 Generating a graph from our data set will be a little bit more involved than our other analysis. However the main idea is that for each movie we will:
 \begin{enumerate}
-    \item For each (movie, rating) pair, identify the set of customers who rated the movie with that particular rating value
-    \item For each (movie, rating) pair, generate an edge between each pair of customers within the set of customers that gave the movie the same rating
-    \item Aggregate the edges for each customer pair to find the edge weights. 
+    \item For each (movie, rating) pair, identify the set of customers who rated the movie with that particular rating value \vspace{-0.2cm}
+    \item For each (movie, rating) pair, generate an edge between each pair of customers within the set of customers that gave the movie the same rating \vspace{-0.2cm}
+    \item Aggregate the edges for each customer pair to find the edge weights. \vspace{-0.3cm}
 \end{enumerate}
+
+
+
 \begin{info}[Hint: Uniform Edges.]
 Since edges are undirected, edges between customer $A$ and $B$ can take the form $(A,B)$ or $(B,A)$. However this could lead to some issues when aggregating edges since there are two possible forms to consider. To mitigate this issue and ensure edges maintain a single form between any two customers, format the edge in such a way where the first customer id of is always less than the second customer id, as shown in the example output in the next section. 
 \end{info}
 
+\vspace{-0.5cm}
+
+\begin{info}[Note: No need for GraphX.]
+Although, Spark has a library \textit{GraphX} dedicated for graph processing, in this section, we are not processing any graph, we are simply generating one. In this case there is no need to use any part of the GraphX library.
+\end{info}
+
+
+
 \subsubsection*{Output and Analysis:}
-In the end, the result of our program should be a list of all the weighted edges in our graph in the format:
+In the end, the output of our program should be a list of all the weighted edges in our graph in the format:
 \begin{lstlisting}[language=bash]
                 (<customer_id_1>, <customer_id_2>) <weight> 
 \end{lstlisting}
@@ -525,6 +538,7 @@ The output for the graph in Figure~\ref{fig:recgraph} would look something like:
 \end{Verbatim}
 %\end{lstlisting}
 Here we can see that customer 1012 has 5 similar ratings to 1062. So, if customer 1012 highly rates a movie/show, we can recommend that movie/show with relatively high confidence to customer 1062 and vice versa. 
+\vspace{-0.1cm}
 
 \section{Getting Started}
 
@@ -595,7 +609,11 @@ The compressed dataset (\textbf{\textit{RedditData.zip}}) is appoximately $\sim$
         \begin{center}
         \href{https://drive.google.com/uc?export=download&id=1zhtVn8-64QKpjl_y0uHWImooeSJkv7bc}{\color{blue}{https://drive.google.com/uc?export=download\&id=1zhtVn8-64QKpjl\_y0uHWImooeSJkv7bc}}
         \end{center}
-    \item \textbf{Via Command Line (WGET):}\\
+    \item \textbf{Via Command Line:}\\
+     To download the dataset using \textit{wget} or \textit{curl} , see the following document and copy and paste the appropriate command:
+        \href{https://raw.githubusercontent.com/DaveedDomingo/Spark-Reddit-Netflix-Project/master/DownloadRedditData.txt}{\color{blue}{https://raw.githubusercontent.com/DaveedDomingo/Spark-Reddit-Netflix-Project/master/DownloadRedditData.txt}}
+        
+    \begin{comment}
         To download the dataset using \textit{wget}, copy and paste the following command and run it:
         \begin{commandline}\begin{verbatim}$ wget -O RedditData.zip "https://docs.google.com/uc?export=download&id=
 "1zhtVn8-64QKpjl_y0uHWImooeSJkv7bc\end{verbatim}\end{commandline}
@@ -603,6 +621,7 @@ The compressed dataset (\textbf{\textit{RedditData.zip}}) is appoximately $\sim$
         To download the dataset using \textit{curl}, copy and paste the following command and run it:
         \begin{commandline}\begin{verbatim}$ curl -L -o RedditData.zip "https://drive.google.com/uc?export=download
 &id="1zhtVn8-64QKpjl_y0uHWImooeSJkv7bc\end{verbatim}\end{commandline}
+\end{comment}
 \end{itemize}
 
 \subsubsection*{Extracting the Dataset:}
@@ -617,6 +636,7 @@ To extract the dataset, simply use the \textit{unzip} command:
 The Netflix Dataset (\textbf{\textit{NetflixData.zip}}) includes the following files:
 \begin{itemize}
     \item \textit{\textbf{NetflixData-Cols.csv}} - file of column names (1 row) ($\sim$30B in size)
+    \item \textit{\textbf{NetflixData-ExtraSmall.csv}} - reviews of 4 movies ($\sim$3k rows)($\sim$70KB in size)
     \item \textit{\textbf{NetflixData-Small.csv}} - reviews of 10 movies ($\sim$20k rows)($\sim$450KB in size)
     \item \textit{\textbf{NetflixData-Medium.csv}} - reviews of 1,000 movies ($\sim$5m rows)($\sim$120MB in size)
     \item \textit{\textbf{NetflixData-Large.csv}} - reviews of 18k movies ($\sim$100m rows)($\sim$2.5GB in size)
@@ -633,7 +653,7 @@ Every row within the Netflix Data represents a movie review and the format of ea
 \normalsize
 
 \subsubsection*{Space Requirements:}
-The compressed dataset (\textbf{\textit{NetflixData.zip}}) is appoximately $\sim$700MB in size and uncompressed is around $\sim$2.6GB, so make sure you have about $\sim$3.5GB of free space when downloading.
+The compressed dataset (\textbf{\textit{NetflixData.zip}}) is approximately $\sim$700MB in size and uncompressed is around $\sim$2.6GB, so make sure you have about $\sim$3.5GB of free space when downloading.
 
 
 \subsubsection*{Downloading the Dataset:}
@@ -641,24 +661,29 @@ The compressed dataset (\textbf{\textit{NetflixData.zip}}) is appoximately $\sim
     \item \textbf{Download via Browser:}\\
         To download the data set from a browser use the following link:
         \begin{center}
-        \href{https://drive.google.com/uc?export=download&id=1RcLSh1EuY5iL48ldqiTYfZaM7zw7KASi}{\color{blue}{https://drive.google.com/uc?export=download\&id=1RcLSh1EuY5iL48ldqiTYfZaM7zw7KASi}}
+        \href{https://drive.google.com/uc?export=download&id=1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp}{\color{blue}{https://drive.google.com/uc?export=download\&id=1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp}}
         \end{center}
-    \item \textbf{Via Command Line (WGET):}\\
-        To download the dataset using \textit{wget}, copy and paste the following command and run it:
+    \item \textbf{Via Command Line:}\\
+        To download the dataset using \textit{wget} or \textit{curl} , see the following document and copy and paste the appropriate command:
+        \href{https://raw.githubusercontent.com/DaveedDomingo/Spark-Reddit-Netflix-Project/master/DownloadNetflixData.txt}{\color{blue}{https://raw.githubusercontent.com/DaveedDomingo/Spark-Reddit-Netflix-Project/master/DownloadNetflixData.txt}}
+        
+    \begin{comment}
         \begin{commandline}\begin{verbatim}$ wget --save-cookies cookies.txt "https://docs.google.com/uc?export=dow
-nload&id="1RcLSh1EuY5iL48ldqiTYfZaM7zw7KASi -O- | sed -rn "s/.*confirm=(
+nload&id="1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp -O- | sed -rn "s/.*confirm=(
 [0-9A-Za-z_]+).*/\1/p" > confirm.txt; wget --load-cookies cookies.txt -
-O NetflixData.zip "https://docs.google.com/uc?export=download&id="1RcLSh
-1EuY5iL48ldqiTYfZaM7zw7KASi"&confirm="$(<confirm.txt); rm -f confirm.tx
+O NetflixData.zip "https://docs.google.com/uc?export=download&id="1s9rt
+4xtLSjjnXSxR9MNqLHVC2DAkzsSp"&confirm="$(<confirm.txt); rm -f confirm.tx
 t cookies.txt\end{verbatim}\end{commandline}
     \item \textbf{Via Command Line (CURL):}\\
         To download the dataset using \textit{curl}, copy and paste the following command and run it:
         \begin{commandline}\begin{verbatim}$ curl -L -c cookies.txt "https://docs.google.com/uc?export=download&id=
-"1RcLSh1EuY5iL48ldqiTYfZaM7zw7KASi | sed -rn "s/.*confirm=([0-9A-Za-z_]+
+"1s9rt4xtLSjjnXSxR9MNqLHVC2DAkzsSp | sed -rn "s/.*confirm=([0-9A-Za-z_]+
 ).*/\1/p" > confirm.txt; curl -L -b cookies.txt -o NetflixData.zip "http
-s://docs.google.com/uc?export=download&id="1RcLSh1EuY5iL48ldqiTYfZaM7zw7
-KASi"&confirm="$(<confirm.txt); rm -f confirm.txt cookies.txt\end{verbatim}
+s://docs.google.com/uc?export=download&id="1s9rt4xtLSjjnXSx
+R9MNqLHVC2DAkzsSp"&confirm="$(<confirm.txt); rm -f confirm.txt cookies.txt\end{verbatim}
 \end{commandline}
+\end{comment}
+
 \end{itemize}
 
 \subsubsection*{Extracting the Dataset:}
@@ -751,14 +776,20 @@ You can run your project in two different places:
     \item \textbf{The iLab Machines}\\ 
     The iLab machines at Rutgers are equipped with Spark running in standalone mode. To run your program: (1) Ensure your compiled jar and data set are uploaded and present on the iLab machine then (2) invoke the spark-submit command like shown above. 
     \item \textbf{Amazon Web Services}\\
-    If you haven't already used AWS, this could be a great opportunity to understand how AWS works. To learn how to run set up a Spark cluster on AWS and run your project take a look at the following guide here: \href{https://github.com/DaveedDomingo/Spark-Reddit-Netflix-Project/blob/master/SparkOnAWS.pdf}{\color{blue}{https://github.com/DaveedDomingo/Spark-Reddit-Netflix-Project/blob/master/SparkOnAWS.pdf}}
+    If you haven't already used AWS, this could be a great opportunity to understand how AWS works. Before you start you will need an AWS account. You can sign up for an AWS Free Tier Account which provides free access for 12 months with resource usage limited on a monthly basis. You can sign up here: \href{https://aws.amazon.com/free/}{\color{blue}{https://aws.amazon.com/free/}}
+	\begin{info}[Note:]
+	You will need a provide credit card info to sign up, however it is only used initially to hold \$1 to verify your identity. However, that being said, \textbf{you will need to make sure you stay under the free tier limits so your card won't get charged. There should be more than enough free tier usage available to complete the project, but you should still pay attention and make sure you stop or terminate your instances to ensure you're not being charged for idling.} If you have any issues, please email me at David.Domingo@rutgers.edu
+	\end{info}
+    
+    	Once you have your account you can get started on learning how to start up a Spark cluster and run Spark programs  here: \\
+	\href{https://github.com/DaveedDomingo/Spark-Reddit-Netflix-Project/blob/master/SparkOnAWS.pdf}{\color{blue}{https://github.com/DaveedDomingo/Spark-Reddit-Netflix-Project/blob/master/SparkOnAWS.pdf}}
 \end{enumerate}
 
 
 \begin{info}[Note on large data sets on iLab machines:]
 The data sets within this project are somewhat large. By default on the iLab machines, you have approximately $\sim$6GB of storage in your home directory (\texttt{/ilab/users/<your netid>}). However this may not be enough space. There is another filesystem where you have more space located at (\texttt{/common/users/<your netid>}). In this file system you have approximately $\sim$100GB of storage space available to you. This should be enough to store anything that won't fit in your home directory. \textbf{If using the iLab machines for this project, I recommend you download the data sets directly to your \texttt{/common/users/<your netid>} directory to ensure you don't take up space in your main home directory}. For more details on all the iLab storage options, see here: \href{https://resources.cs.rutgers.edu/docs/file-storage/storage-technology-options/}{\color{blue}{https://resources.cs.rutgers.edu/docs/file-storage/storage-technology-options/}}
 \end{info}
-
+\vspace{-0.4cm}
 \begin{info}[Saving Output to File:]
 So the results of your program should print out in STDOUT. However you'll notice when running your Spark program, you'll also see output given from spark. You can save and isolate your output by redirecting it to a file like:
 \begin{verbatim}               $ spark-submit myjar.jar inputdata.csv > out.txt
@@ -769,17 +800,6 @@ So the results of your program should print out in STDOUT. However you'll notice
 
 
 
-\section{Recommended Steps}
-The hardest part would be to learn how Apache Spark works. I recommend spending a good amount of time in the beginning to fully understand Apache Spark and try and get an test Spark program working before working on any of the parts of this project:
-
-\begin{enumerate}
-    \item Read and learn about Apache Spark 
-    \item Take a look a word count example and get it running on the iLab Machines and AWS 
-    \item Implement Reddit Data programs 
-    \item Implement Netflix Data programs
-    \item Write Writeup 
-    \item Submit on time
-\end{enumerate}
 
 \section{Submission}
 To submit your project, submit the following items:
@@ -816,9 +836,21 @@ The write up is very important when it comes to evaluating your project. Not onl
 \begin{info}[When in doubt, Google (\textit{responsibly}):]
 If you have an issue or your program is throwing an error that you don't know how to fix, Google It. Someone, somewhere, probably faced the same issue at some point. However do so responsibly and don't cheat. If you are caught cheating, your case will be handled according to Rutgers' academic integrity policy (\href{http://academicintegrity.rutgers.edu/}{http://academicintegrity.rutgers.edu/}).
 \end{info}
+\vspace{-0.4cm}
 \begin{info}[Combining Maven Goals:]
 You may find yourself running Maven goals frequently to build the project. You might find yourself running them so frequently it may just interfere with your precious development time. Luckily you can group goals together. For example, since it is good practice run the clean goal before the package goal, we should group them. In Eclipse this is done by running a Maven build like we are running the package goal, but instead of writing "package" in the Goals text box, we write "clean package". In Command Line, this is done by navigating the root of the project directory and running "mvn clean package". These will both run the clean goal first then the package goal. 
 \end{info}
+
+\section{Recommended Steps}
+The hardest part would be to learn how Apache Spark works. I recommend spending a good amount of time in the beginning to fully understand Apache Spark and try and get an test Spark program working before working on any of the parts of this project:
+
+\begin{enumerate}
+    \item Read and learn about Apache Spark 
+    \item Take a look a WrodCount example program and get it running on the iLab Machines and AWS 
+    \item Implement Reddit and Netflix Programs
+    \item Write Writeup 
+    \item Submit on time
+\end{enumerate}
 
 \section*{Frequently Asked Questions}
 \begin{itemize}
